@@ -1,0 +1,32 @@
+{
+    "name": "C Development Environment",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "workspaceFolder": "/workspace",
+    "remoteUser": "developer",
+    "mounts": [
+        "source=${localEnv:HOME},target=/host-home,type=bind,consistency=cached"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "llvm-vs-code-extensions.vscode-clangd",
+                "ms-vscode.cmake-tools",
+                "ms-azuretools.vscode-docker",
+                "vadimcn.vscode-lldb",
+                "github.vscode-github-actions",
+                "eamodio.gitlens"
+            ],
+            "settings": {
+                "cmake.cmakePath": "/usr/bin/cmake",
+                "cmake.buildDirectory": "${workspaceFolder}/build",
+                "cmake.configureOnOpen": true,
+                "C_Cpp.intelliSenseEngine": "disabled"
+            }
+        }
+    },
+    "postCreateCommand": "bash .devcontainer/setup-git.sh && rm -rf build",
+    "updateRemoteUserUID": false
+}

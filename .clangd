@@ -1,0 +1,11 @@
+CompileFlags:
+  Add: [-std=c17]
+  Remove: [-march=*]
+
+Index:
+  Background: Build
+
+InlayHints:
+  Enabled: Yes
+  ParameterNames: Yes
+  DeducedTypes: Yes
