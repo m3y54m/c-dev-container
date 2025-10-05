@@ -1,66 +1,265 @@
-# Clang-Tidy configuration for C projects
-# Focuses on C-specific checks and best practices
-
+# Comprehensive clang-tidy configuration for C development
+# Enable all important check categories
 Checks: >
-  -*,
-  bugprone-*,
-  cert-*,
-  clang-analyzer-*,
-  cppcoreguidelines-*,
-  hicpp-*,
-  misc-*,
-  performance-*,
-  portability-*,
-  readability-*,
-  -bugprone-easily-swappable-parameters,
-  -cert-dcl03-c,
-  -cert-dcl37-c,
-  -cert-dcl51-cpp,
-  -cppcoreguidelines-avoid-magic-numbers,
-  -cppcoreguidelines-init-variables,
-  -hicpp-*,
-  -misc-unused-parameters,
+  *,
+  -abseil-*,
+  -android-*,
+  -fuchsia-*,
+  -google-*,
+  -llvm-*,
+  -llvmlibc-*,
+  -zircon-*,
+  -readability-identifier-naming,
   -readability-magic-numbers,
-  -readability-isolate-declaration,
-  -readability-function-cognitive-complexity
+  -readability-uppercase-literal-suffix,
+  -modernize-use-trailing-return-type,
+  -modernize-use-nodiscard,
+  -modernize-concat-nested-namespaces,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-macro-usage,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-pro-type-const-cast,
+  -cppcoreguidelines-pro-type-cstyle-cast,
+  -cppcoreguidelines-pro-type-member-init,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-type-union-access,
+  -cppcoreguidelines-pro-type-vararg,
+  -cppcoreguidelines-special-member-functions,
+  -hicpp-*,
+  -misc-*,
+  -cert-*,
+  -clang-analyzer-*,
+  -clang-diagnostic-*
 
-# Header filter for project files only
-HeaderFilterRegex: '.*\.(h|hpp)$'
+# Don't treat warnings as errors (useful for gradual adoption)
+WarningsAsErrors: ''
 
-# Analysis options
+# Check all headers
+HeaderFilterRegex: '.*'
+
+# Don't analyze temporary destructors (C++ specific)
 AnalyzeTemporaryDtors: false
 
-# Check options
+# Use file-based formatting
+FormatStyle: 'file'
+
+# Additional options for C development
 CheckOptions:
-  - key: readability-identifier-naming.VariableCase
-    value: snake_case
-  - key: readability-identifier-naming.FunctionCase
-    value: snake_case
-  - key: readability-identifier-naming.MacroCase
-    value: UPPER_CASE
-  - key: readability-identifier-naming.ConstantCase
-    value: UPPER_CASE
+  # Performance checks
+  - key: performance-for-range-copy
+    value: 'WarnOnAllAutoCopies'
+  - key: performance-implicit-conversion-in-loop
+    value: 'WarnOnImplicitConversion'
+  - key: performance-unnecessary-copy-initialization
+    value: 'WarnOnAllAutoCopies'
+  - key: performance-unnecessary-value-param
+    value: 'WarnOnAllAutoCopies'
+  
+  # Readability checks
+  - key: readability-function-cognitive-complexity
+    value: '20'
+  - key: readability-function-size
+    value: '50'
+  - key: readability-identifier-length
+    value: '3'
+  - key: readability-identifier-naming.ClassCase
+    value: 'CamelCase'
   - key: readability-identifier-naming.EnumCase
-    value: snake_case
+    value: 'CamelCase'
+  - key: readability-identifier-naming.FunctionCase
+    value: 'camelBack'
   - key: readability-identifier-naming.StructCase
-    value: snake_case
+    value: 'CamelCase'
   - key: readability-identifier-naming.TypedefCase
-    value: snake_case
-  - key: readability-function-size.LineThreshold
-    value: 100
-  - key: readability-function-size.StatementThreshold
-    value: 50
-  - key: performance-unnecessary-value-parameter.AllowedTypes
-    value: ''
-  - key: cert-dcl16-c.NewSuffixes
-    value: 'L;LL;LU;LLU'
-  - key: cert-oop54-cpp.WarnOnlyIfThisHasSuspiciousField
-    value: false
-  - key: bugprone-sizeof-expression.WarnOnSizeOfConstant
-    value: true
-  - key: bugprone-sizeof-expression.WarnOnSizeOfThis
-    value: true
-  - key: bugprone-string-constructor.WarnOnLargeLength
-    value: true
-  - key: misc-throw-by-value-catch-by-reference.CheckThrowTemporaries
-    value: true
+    value: 'CamelCase'
+  - key: readability-identifier-naming.VariableCase
+    value: 'camelBack'
+  - key: readability-identifier-naming.ParameterCase
+    value: 'camelBack'
+  - key: readability-identifier-naming.MemberCase
+    value: 'camelBack'
+  - key: readability-identifier-naming.PrivateMemberSuffix
+    value: '_'
+  - key: readability-identifier-naming.ProtectedMemberSuffix
+    value: '_'
+  
+  # Bugprone checks
+  - key: bugprone-branch-clone
+    value: 'true'
+  - key: bugprone-dangling-handle
+    value: 'true'
+  - key: bugprone-exception-escape
+    value: 'true'
+  - key: bugprone-fold-init-type
+    value: 'true'
+  - key: bugprone-forward-declaration-namespace
+    value: 'true'
+  - key: bugprone-forwarding-reference-overload
+    value: 'true'
+  - key: bugprone-inaccurate-erase
+    value: 'true'
+  - key: bugprone-incorrect-roundings
+    value: 'true'
+  - key: bugprone-infinite-loop
+    value: 'true'
+  - key: bugprone-lambda-function-name
+    value: 'true'
+  - key: bugprone-macro-parentheses
+    value: 'true'
+  - key: bugprone-macro-repeated-side-effects
+    value: 'true'
+  - key: bugprone-misplaced-operator-in-strlen-in-alloc
+    value: 'true'
+  - key: bugprone-misplaced-pointer-arithmetic-in-alloc
+    value: 'true'
+  - key: bugprone-misplaced-widening-cast
+    value: 'true'
+  - key: bugprone-move-forwarding-reference
+    value: 'true'
+  - key: bugprone-multiple-statement-macro
+    value: 'true'
+  - key: bugprone-narrowing-conversions
+    value: 'true'
+  - key: bugprone-no-escape
+    value: 'true'
+  - key: bugprone-not-null-terminated-result
+    value: 'true'
+  - key: bugprone-parent-virtual-call
+    value: 'true'
+  - key: bugprone-posix-return
+    value: 'true'
+  - key: bugprone-reserved-identifier
+    value: 'true'
+  - key: bugprone-sizeof-container
+    value: 'true'
+  - key: bugprone-sizeof-expression
+    value: 'true'
+  - key: bugprone-spurious-conditional-for-nullptr
+    value: 'true'
+  - key: bugprone-string-constructor
+    value: 'true'
+  - key: bugprone-string-integer-assignment
+    value: 'true'
+  - key: bugprone-string-literal-with-embedded-nul
+    value: 'true'
+  - key: bugprone-suspicious-enum-usage
+    value: 'true'
+  - key: bugprone-suspicious-include
+    value: 'true'
+  - key: bugprone-suspicious-memset-usage
+    value: 'true'
+  - key: bugprone-suspicious-missing-comma
+    value: 'true'
+  - key: bugprone-suspicious-semicolon
+    value: 'true'
+  - key: bugprone-suspicious-string-compare
+    value: 'true'
+  - key: bugprone-swapped-arguments
+    value: 'true'
+  - key: bugprone-terminating-continue
+    value: 'true'
+  - key: bugprone-throw-keyword-missing
+    value: 'true'
+  - key: bugprone-too-small-loop-variable
+    value: 'true'
+  - key: bugprone-undelegated-constructor
+    value: 'true'
+  - key: bugprone-unhandled-self-assignment
+    value: 'true'
+  - key: bugprone-unhandled-self-move
+    value: 'true'
+  - key: bugprone-unused-raii
+    value: 'true'
+  - key: bugprone-unused-return-value
+    value: 'true'
+  - key: bugprone-use-after-move
+    value: 'true'
+  - key: bugprone-virtual-near-miss
+    value: 'true'
+  
+  # Modernize checks
+  - key: modernize-avoid-bind
+    value: 'true'
+  - key: modernize-avoid-c-arrays
+    value: 'true'
+  - key: modernize-concat-nested-namespaces
+    value: 'true'
+  - key: modernize-deprecated-headers
+    value: 'true'
+  - key: modernize-deprecated-ios-base-aliases
+    value: 'true'
+  - key: modernize-loop-convert
+    value: 'true'
+  - key: modernize-make-shared
+    value: 'true'
+  - key: modernize-make-unique
+    value: 'true'
+  - key: modernize-pass-by-value
+    value: 'true'
+  - key: modernize-raw-string-literal
+    value: 'true'
+  - key: modernize-redundant-void-arg
+    value: 'true'
+  - key: modernize-replace-auto-ptr
+    value: 'true'
+  - key: modernize-replace-disallow-copy-and-assign-macro
+    value: 'true'
+  - key: modernize-replace-random-shuffle
+    value: 'true'
+  - key: modernize-return-braced-init-list
+    value: 'true'
+  - key: modernize-shrink-to-fit
+    value: 'true'
+  - key: modernize-unary-static-assert
+    value: 'true'
+  - key: modernize-use-auto
+    value: 'true'
+  - key: modernize-use-bool-literals
+    value: 'true'
+  - key: modernize-use-default-member-init
+    value: 'true'
+  - key: modernize-use-emplace
+    value: 'true'
+  - key: modernize-use-equals-default
+    value: 'true'
+  - key: modernize-use-equals-delete
+    value: 'true'
+  - key: modernize-use-noexcept
+    value: 'true'
+  - key: modernize-use-nullptr
+    value: 'true'
+  - key: modernize-use-override
+    value: 'true'
+  - key: modernize-use-transparent-functors
+    value: 'true'
+  - key: modernize-use-uncaught-exceptions
+    value: 'true'
+  
+  # Performance checks
+  - key: performance-for-range-copy
+    value: 'WarnOnAllAutoCopies'
+  - key: performance-implicit-conversion-in-loop
+    value: 'WarnOnImplicitConversion'
+  - key: performance-no-automatic-move
+    value: 'true'
+  - key: performance-no-int-to-ptr
+    value: 'true'
+  - key: performance-noexcept-move-constructor
+    value: 'true'
+  - key: performance-trivially-destructible
+    value: 'true'
+  - key: performance-type-promotion-in-math-fn
+    value: 'true'
+  - key: performance-unnecessary-copy-initialization
+    value: 'WarnOnAllAutoCopies'
+  - key: performance-unnecessary-value-param
+    value: 'WarnOnAllAutoCopies'
+  
+  # Portability checks
+  - key: portability-restrict
+    value: 'true'
+  - key: portability-simd-intrinsics
+    value: 'true'

@@ -35,7 +35,12 @@
                 "clangd.path": "clangd",
                 "lldb.launch.expressions": "native",
                 "lldb.launch.sourceLanguages": ["c", "cpp"],
-                "lldb.console": "integratedTerminal"
+                "lldb.console": "integratedTerminal",
+                "github-actions.workflows.pinned": [
+                    ".github/workflows/ci.yml"
+                ],
+                "github-actions.workflows.showLogs": true,
+                "github-actions.workflows.refreshInterval": 30
             }
         }
     },

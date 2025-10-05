@@ -30,3 +30,9 @@ cachegrind.out.*
 callgrind.out.*
 massif.out.*
 *.supp
+
+# GitHub Actions artifacts
+.github/workflows/artifacts/
+
+# Clang-tidy configuration (optional - can be committed)
+# .clang-tidy

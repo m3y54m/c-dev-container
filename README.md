@@ -109,7 +109,7 @@ These tools provide:
 - **Valgrind** memory checker for detecting leaks, buffer overflows, and memory errors
 - **Git** with SSH signing support
 - **Docker extension** for container management
-- **VSCode extensions**: clangd, CMake Tools, Docker, CodeLLDB
+- **VSCode extensions**: clangd, CMake Tools, Docker, CodeLLDB, GitHub Actions
 
 ## Build Configurations
 
@@ -186,3 +186,160 @@ valgrind --tool=cachegrind ./build/debug/bin/hello_world
 - **Uninitialized memory** access
 
 See `VALGRIND_GUIDE.md` for comprehensive usage instructions.
+
+## Static Analysis with clang-tidy
+
+The project includes a comprehensive clang-tidy configuration (`.clang-tidy`) with 200+ checks:
+
+### Check Categories Enabled
+
+#### 🐛 **Bug Detection (`bugprone-*`):**
+- **Buffer overflows** and null pointer dereferences
+- **Memory leaks** and use-after-free detection
+- **Infinite loops** and suspicious conditions
+- **Macro issues** and string handling problems
+- **Narrowing conversions** and type safety
+
+#### 🚀 **Performance (`performance-*`):**
+- **Inefficient loops** and unnecessary copies
+- **Move semantics** and copy optimization
+- **Type promotions** in math functions
+- **Automatic move** detection
+
+#### 📖 **Readability (`readability-*`):**
+- **Function complexity** (max 20 cognitive complexity)
+- **Function size** (max 50 lines)
+- **Identifier naming** (min 3 characters)
+- **Code formatting** and brace usage
+- **Magic numbers** detection
+
+#### 🔄 **Modernization (`modernize-*`):**
+- **Deprecated functions** detection
+- **Loop conversion** suggestions
+- **Auto keyword** usage
+- **Nullptr** instead of NULL
+- **Override** keyword usage
+
+#### 🛡️ **Security (`cert-*`):**
+- **Buffer overflow** prevention
+- **Integer overflow** detection
+- **Unsafe functions** warnings
+- **Memory management** issues
+
+### Usage
+
+#### **Command Line:**
+```bash
+# Basic analysis
+clang-tidy src/main.c -- -Ibuild/debug -std=c17
+
+# With specific checks
+clang-tidy -checks='bugprone-*,performance-*' src/main.c -- -Ibuild/debug -std=c17
+```
+
+#### **VS Code Integration:**
+- **Real-time analysis** with clangd extension
+- **Error highlighting** in editor
+- **Quick fixes** for common issues
+- **Hover information** for warnings
+
+#### **CI Integration:**
+- **Automated analysis** on every commit
+- **Error reporting** in pull requests
+- **Artifact upload** for detailed reports
+
+### Configuration
+
+The `.clang-tidy` file includes:
+- **200+ enabled checks** across all categories
+- **Custom thresholds** for complexity and size
+- **Naming conventions** for identifiers
+- **Performance warnings** configuration
+- **Excluded checks** for C++-specific rules
+
+### Example Output
+
+```
+src/main.c:30:9: warning: variable name 'i' is too short, expected at least 3 characters [readability-identifier-length]
+src/main.c:31:5: warning: kernel performance could be improved by unrolling this loop [altera-unroll-loops]
+src/main.c:39:19: warning: parameter name 'a' is too short [readability-identifier-length]
+src/main.c:41:19: warning: statement should be inside braces [readability-braces-around-statements]
+src/main.c:51:30: warning: narrowing conversion from 'unsigned long' to signed type 'int' [bugprone-narrowing-conversions]
+```
+
+## Continuous Integration
+
+The project includes a comprehensive GitHub Actions CI workflow that runs on every push and pull request:
+
+### CI Pipeline Features
+
+#### ✅ **Multi-Build Testing:**
+- **Debug build** with full debugging symbols
+- **Release build** with maximum optimization
+- **Parallel builds** using all available CPU cores
+
+#### ✅ **Static Analysis:**
+- **clang-tidy** with comprehensive checks (200+ rules)
+- **Bug detection** (buffer overflows, null pointer derefs, etc.)
+- **Performance analysis** (inefficient loops, unnecessary copies)
+- **Code style** enforcement (naming, formatting, complexity)
+- **Modern C practices** (deprecated functions, best practices)
+- **C17 standard** compliance verification
+- **Warning detection** with `-Wall -Wextra`
+
+#### ✅ **Dynamic Analysis:**
+- **Valgrind Memcheck** for memory leak detection
+- **Valgrind Cachegrind** for performance profiling
+- **Both debug and release** builds tested
+
+#### ✅ **Artifact Management:**
+- **Build artifacts** uploaded for inspection
+- **Valgrind reports** preserved for analysis
+- **7-day retention** for debugging failed builds
+
+### CI Workflow Triggers
+- **Push** to `main` or `master` branch
+- **Pull requests** targeting `main` or `master` branch
+
+### Viewing CI Results
+
+#### **GitHub Actions Extension (VS Code):**
+- **Real-time workflow status** in the sidebar
+- **Pinned workflows** for quick access
+- **Log viewing** directly in VS Code
+- **Workflow management** and re-running
+- **Artifact download** from the editor
+
+#### **GitHub Web Interface:**
+1. Go to your GitHub repository
+2. Click on **"Actions"** tab
+3. Select the workflow run
+4. Download artifacts for detailed analysis
+
+### GitHub Actions Extension Features
+
+The dev container includes the **GitHub Actions extension** with:
+
+#### ✅ **Workflow Management:**
+- **Pin workflows** for quick access
+- **View workflow status** in real-time
+- **Re-run failed workflows** with one click
+- **Cancel running workflows** when needed
+
+#### ✅ **Log Integration:**
+- **View logs** directly in VS Code
+- **Syntax highlighting** for YAML workflows
+- **Error highlighting** and navigation
+- **Step-by-step execution** tracking
+
+#### ✅ **Artifact Management:**
+- **Download artifacts** from VS Code
+- **Browse build outputs** without leaving the editor
+- **Valgrind reports** accessible locally
+- **Build artifacts** inspection
+
+#### ✅ **Development Workflow:**
+- **Edit workflows** with IntelliSense
+- **Validate YAML** syntax
+- **Quick actions** for common tasks
+- **Integration** with Git operations

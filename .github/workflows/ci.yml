@@ -1,0 +1,134 @@
+name: CI - Build, Static Analysis, and Memory Testing
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          clang \
+          clangd \
+          clang-tidy \
+          cmake \
+          lldb \
+          valgrind \
+          git \
+          gnupg \
+          openssh-client \
+          nano \
+          sudo
+        
+    - name: Set up Clang as default compiler
+      run: |
+        sudo update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100
+        sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang++ 100
+        
+    - name: Configure CMake (Debug)
+      run: |
+        mkdir -p build/debug
+        cd build/debug
+        cmake -DCMAKE_BUILD_TYPE=Debug \
+              -DCMAKE_C_COMPILER=clang \
+              -DCMAKE_CXX_COMPILER=clang++ \
+              -DCMAKE_C_STANDARD=17 \
+              -DCMAKE_C_STANDARD_REQUIRED=ON \
+              -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+              ../..
+              
+    - name: Build Debug
+      run: |
+        cd build/debug
+        cmake --build . --parallel $(nproc)
+        
+    - name: Configure CMake (Release)
+      run: |
+        mkdir -p build/release
+        cd build/release
+        cmake -DCMAKE_BUILD_TYPE=Release \
+              -DCMAKE_C_COMPILER=clang \
+              -DCMAKE_CXX_COMPILER=clang++ \
+              -DCMAKE_C_STANDARD=17 \
+              -DCMAKE_C_STANDARD_REQUIRED=ON \
+              -DCMAKE_C_FLAGS_RELEASE="-O3 -DNDEBUG -Wall -Wextra -flto -march=native -mtune=native -ffast-math -funroll-loops -fomit-frame-pointer" \
+              -DCMAKE_EXE_LINKER_FLAGS_RELEASE="-flto -Wl,--strip-all -Wl,--gc-sections" \
+              ../..
+              
+    - name: Build Release
+      run: |
+        cd build/release
+        cmake --build . --parallel $(nproc)
+        
+    - name: Test Debug Build
+      run: |
+        cd build/debug
+        ./bin/hello_world
+        
+    - name: Test Release Build
+      run: |
+        cd build/release
+        ./bin/hello_world
+        
+    - name: Static Analysis with clang-tidy
+      run: |
+        clang-tidy src/main.c -- -Ibuild/debug -std=c17
+        
+    - name: Memory Analysis with Valgrind (Debug)
+      run: |
+        cd build/debug
+        valgrind --leak-check=full \
+                 --show-leak-kinds=all \
+                 --track-origins=yes \
+                 --error-exitcode=1 \
+                 ./bin/hello_world
+                 
+    - name: Memory Analysis with Valgrind (Release)
+      run: |
+        cd build/release
+        valgrind --leak-check=full \
+                 --show-leak-kinds=all \
+                 --track-origins=yes \
+                 --error-exitcode=1 \
+                 ./bin/hello_world
+                 
+    - name: Cache Profiling with Valgrind
+      run: |
+        cd build/debug
+        valgrind --tool=cachegrind \
+                 --cache-sim=yes \
+                 --branch-sim=yes \
+                 ./bin/hello_world
+                 
+    - name: Upload Valgrind Reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: valgrind-reports
+        path: |
+          build/debug/cachegrind.out.*
+          build/release/cachegrind.out.*
+        retention-days: 7
+        
+    - name: Check Build Artifacts
+      run: |
+        echo "=== Debug Build Info ==="
+        ls -la build/debug/bin/
+        file build/debug/bin/hello_world
+        echo "=== Release Build Info ==="
+        ls -la build/release/bin/
+        file build/release/bin/hello_world
+        echo "=== Size Comparison ==="
+        echo "Debug size: $(stat -c%s build/debug/bin/hello_world) bytes"
+        echo "Release size: $(stat -c%s build/release/bin/hello_world) bytes"
