@@ -106,7 +106,7 @@ These tools provide:
 - **Clang-tidy** for static analysis and code quality checks
 - **CMake build system** with automatic configuration
 - **LLDB debugger** for debugging (integrated with clangd)
-- **Valgrind** memory checker
+- **Valgrind** memory checker for detecting leaks, buffer overflows, and memory errors
 - **Git** with SSH signing support
 - **Docker extension** for container management
 - **VSCode extensions**: clangd, CMake Tools, Docker, CodeLLDB
@@ -157,3 +157,32 @@ lldb build/debug/bin/hello_world
 (lldb) breakpoint set --name main
 (lldb) run
 ```
+
+## Memory Debugging with Valgrind
+
+Valgrind is integrated for detecting memory leaks, buffer overflows, and other memory issues:
+
+### Command Line Usage
+```bash
+# Basic memory check
+valgrind ./build/debug/bin/hello_world
+
+# Full memory check with leak detection
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./build/debug/bin/hello_world
+
+# Cache profiling
+valgrind --tool=cachegrind ./build/debug/bin/hello_world
+```
+
+### VS Code Integration
+- **Press `Ctrl+Shift+P`** → "Tasks: Run Task" → "valgrind-check"
+- **Or use the terminal**: `valgrind --leak-check=full ./build/debug/bin/hello_world`
+
+### What Valgrind Detects
+- **Memory leaks** (allocated but never freed)
+- **Buffer overflows** (writing beyond allocated memory)
+- **Use after free** (accessing freed memory)
+- **Double free** (freeing the same memory twice)
+- **Uninitialized memory** access
+
+See `VALGRIND_GUIDE.md` for comprehensive usage instructions.

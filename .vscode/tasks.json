@@ -68,6 +68,42 @@
                 "focus": false,
                 "panel": "shared"
             }
+        },
+        {
+            "label": "valgrind-check",
+            "type": "shell",
+            "command": "valgrind",
+            "args": [
+                "--leak-check=full",
+                "--show-leak-kinds=all",
+                "--track-origins=yes",
+                "${workspaceFolder}/build/debug/bin/hello_world"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "dependsOn": "build-debug"
+        },
+        {
+            "label": "valgrind-cachegrind",
+            "type": "shell",
+            "command": "valgrind",
+            "args": [
+                "--tool=cachegrind",
+                "${workspaceFolder}/build/debug/bin/hello_world"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "dependsOn": "build-debug"
         }
     ]
 }

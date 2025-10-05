@@ -1,5 +1,6 @@
 # Build directories
 build/
+build*/
 bin/
 
 # IDE files
@@ -23,3 +24,9 @@ Thumbs.db
 *.exe
 *.out
 *.app
+
+# Valgrind output files
+cachegrind.out.*
+callgrind.out.*
+massif.out.*
+*.supp
