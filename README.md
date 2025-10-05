@@ -31,11 +31,46 @@ A minimal C project template with CMake build system and VSCode devcontainer.
 ├── .clang-tidy             # Static analysis configuration  
 ├── .clangd                 # Language server configuration
 ├── CMakeLists.txt          # CMake build configuration
+├── CMakePresets.json       # CMake preset configurations
 ├── .gitignore             # Git ignore rules
 └── README.md              # This file
 ```
 
-## Building Manually
+## Building
+
+### Using CMake Presets (Recommended)
+
+#### Build and Run (One Command)
+```bash
+# Build debug and run immediately
+cmake --preset debug && cmake --build --preset run-debug
+
+# Build release and run immediately
+cmake --preset release && cmake --build --preset run-release
+
+# Build default and run immediately
+cmake --preset default && cmake --build --preset run-default
+```
+
+#### Build Only
+```bash
+# Debug build
+cmake --preset debug
+cmake --build --preset debug
+./build-debug/bin/hello_world
+
+# Release build
+cmake --preset release
+cmake --build --preset release
+./build-release/bin/hello_world
+
+# Default build
+cmake --preset default
+cmake --build --preset default
+./build/bin/hello_world
+```
+
+### Manual Building
 
 ```bash
 mkdir build
