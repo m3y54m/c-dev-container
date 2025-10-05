@@ -47,9 +47,6 @@ cmake --preset debug && cmake --build --preset run-debug
 
 # Build release and run immediately
 cmake --preset release && cmake --build --preset run-release
-
-# Build default and run immediately
-cmake --preset default && cmake --build --preset run-default
 ```
 
 #### Build Only
@@ -57,17 +54,12 @@ cmake --preset default && cmake --build --preset run-default
 # Debug build
 cmake --preset debug
 cmake --build --preset debug
-./build-debug/bin/hello_world
+./build/debug/bin/hello_world
 
 # Release build
 cmake --preset release
 cmake --build --preset release
-./build-release/bin/hello_world
-
-# Default build
-cmake --preset default
-cmake --build --preset default
-./build/bin/hello_world
+./build/release/bin/hello_world
 ```
 
 ### Manual Building
@@ -109,12 +101,59 @@ These tools provide:
 
 ## Development Tools Included
 
-- **Clang compiler** (C17 standard)
+- **Clang compiler** (C17 standard) with maximum optimization for release builds
 - **Clangd language server** for enhanced IntelliSense and code analysis
 - **Clang-tidy** for static analysis and code quality checks
 - **CMake build system** with automatic configuration
-- **GDB debugger** for debugging
+- **LLDB debugger** for debugging (integrated with clangd)
 - **Valgrind** memory checker
 - **Git** with SSH signing support
 - **Docker extension** for container management
-- **VSCode extensions**: clangd, CMake Tools, Docker
+- **VSCode extensions**: clangd, CMake Tools, Docker, CodeLLDB
+
+## Build Configurations
+
+### Debug Build
+- **Optimization**: `-O0` (no optimization for easier debugging)
+- **Debug symbols**: `-g` (full debugging information)
+- **Warnings**: `-Wall -Wextra` (comprehensive warning detection)
+- **Size**: ~17KB (with debug symbols)
+
+### Release Build (Maximum Optimization)
+- **Optimization**: `-O3` (maximum speed optimization)
+- **Link-time optimization**: `-flto` (whole-program optimization)
+- **CPU-specific**: `-march=native -mtune=native` (optimized for current CPU)
+- **Math optimization**: `-ffast-math` (aggressive floating-point optimizations)
+- **Loop optimization**: `-funroll-loops` (unroll loops for speed)
+- **Frame pointer**: `-fomit-frame-pointer` (smaller, faster code)
+- **Dead code elimination**: `-Wl,--gc-sections` (remove unused code)
+- **Symbol stripping**: `-Wl,--strip-all` (remove debug symbols)
+- **Size**: ~15KB (highly optimized)
+
+## Debugging
+
+The project is configured for debugging with LLDB (Low Level Debugger) which integrates seamlessly with clangd:
+
+### VS Code Debugging
+1. **Set breakpoints** by clicking in the gutter next to line numbers
+2. **Press F5** or go to Run and Debug panel
+3. **Select debug configuration**:
+   - "Debug with LLDB" (debug build)
+
+### Debug Features
+- **Breakpoints** and step-through debugging
+- **Variable inspection** and watch expressions
+- **Call stack** navigation
+- **Integrated terminal** for LLDB commands
+- **Automatic build** before debugging
+
+### Command Line Debugging
+```bash
+# Build debug version
+cmake --preset debug && cmake --build --preset debug
+
+# Debug with LLDB
+lldb build/debug/bin/hello_world
+(lldb) breakpoint set --name main
+(lldb) run
+```

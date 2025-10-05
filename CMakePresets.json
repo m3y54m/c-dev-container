@@ -2,25 +2,11 @@
     "version": 3,
     "configurePresets": [
         {
-            "name": "default",
-            "displayName": "Default Configuration",
-            "description": "Default build configuration with Clang",
-            "generator": "Unix Makefiles",
-            "binaryDir": "${sourceDir}/build",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++",
-                "CMAKE_C_STANDARD": "17",
-                "CMAKE_C_STANDARD_REQUIRED": "ON"
-            }
-        },
-        {
             "name": "debug",
-            "displayName": "Debug Build",
+            "displayName": "Build for Debug",
             "description": "Debug build with debug symbols and no optimization",
             "generator": "Unix Makefiles",
-            "binaryDir": "${sourceDir}/build-debug",
+            "binaryDir": "${sourceDir}/build/debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_C_COMPILER": "clang",
@@ -33,60 +19,49 @@
         },
         {
             "name": "release",
-            "displayName": "Release Build",
+            "displayName": "Build for Release",
             "description": "Release build with optimizations",
             "generator": "Unix Makefiles",
-            "binaryDir": "${sourceDir}/build-release",
+            "binaryDir": "${sourceDir}/build/release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_C_STANDARD": "17",
                 "CMAKE_C_STANDARD_REQUIRED": "ON",
-                "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG -Wall -Wextra"
+                "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG -Wall -Wextra -flto -march=native -mtune=native -ffast-math -funroll-loops -fomit-frame-pointer",
+                "CMAKE_EXE_LINKER_FLAGS_RELEASE": "-flto -Wl,--strip-all -Wl,--gc-sections"
             }
         }
     ],
     "buildPresets": [
         {
-            "name": "default",
-            "displayName": "Default Build",
-            "configurePreset": "default",
-            "jobs": 4
-        },
-        {
             "name": "debug",
-            "displayName": "Debug Build",
+            "displayName": "Build",
+            "description": "Build for debugging",
             "configurePreset": "debug",
             "jobs": 4
         },
         {
             "name": "release",
-            "displayName": "Release Build",
+            "displayName": "Build",
+            "description": "Build for release",
             "configurePreset": "release",
             "jobs": 4
         },
         {
             "name": "run-debug",
-            "displayName": "Build and Run Debug",
-            "description": "Build debug and immediately run hello_world",
+            "displayName": "Run",
+            "description": "Build for debugging and immediately run",
             "configurePreset": "debug",
-            "targets": ["run-debug"],
+            "targets": ["run"],
             "jobs": 4
         },
         {
             "name": "run-release",
-            "displayName": "Build and Run Release",
-            "description": "Build release and immediately run hello_world",
+            "displayName": "Run",
+            "description": "Build for release and immediately run",
             "configurePreset": "release",
-            "targets": ["run-release"],
-            "jobs": 4
-        },
-        {
-            "name": "run-default",
-            "displayName": "Build and Run Default",
-            "description": "Build default and immediately run hello_world",
-            "configurePreset": "default",
             "targets": ["run"],
             "jobs": 4
         }

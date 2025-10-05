@@ -13,22 +13,14 @@ set_target_properties(hello_world PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
 
-# Add custom targets to run the executable
+# Ensure debug symbols are generated for debugging
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_options(hello_world PRIVATE -g -O0)
+endif()
+
+# Add custom target to run the executable
 add_custom_target(run
     COMMAND ${CMAKE_BINARY_DIR}/bin/hello_world
     DEPENDS hello_world
     COMMENT "Running hello_world executable"
-)
-
-# Add custom targets for each build type
-add_custom_target(run-debug
-    COMMAND ${CMAKE_BINARY_DIR}/bin/hello_world
-    DEPENDS hello_world
-    COMMENT "Running debug hello_world executable"
-)
-
-add_custom_target(run-release
-    COMMAND ${CMAKE_BINARY_DIR}/bin/hello_world
-    DEPENDS hello_world
-    COMMENT "Running release hello_world executable"
 )

@@ -23,7 +23,19 @@
                 "cmake.cmakePath": "/usr/bin/cmake",
                 "cmake.buildDirectory": "${workspaceFolder}/build",
                 "cmake.configureOnOpen": true,
-                "C_Cpp.intelliSenseEngine": "disabled"
+                "C_Cpp.intelliSenseEngine": "disabled",
+                "clangd.arguments": [
+                    "--background-index",
+                    "--clang-tidy",
+                    "--header-insertion=iwyu",
+                    "--completion-style=detailed",
+                    "--function-arg-placeholders",
+                    "--fallback-style=llvm"
+                ],
+                "clangd.path": "clangd",
+                "lldb.launch.expressions": "native",
+                "lldb.launch.sourceLanguages": ["c", "cpp"],
+                "lldb.console": "integratedTerminal"
             }
         }
     },
