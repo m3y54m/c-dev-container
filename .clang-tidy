@@ -1,5 +1,5 @@
 # Comprehensive clang-tidy configuration for C development
-# Enable all important check categories
+# Enable C-specific checks only
 Checks: >
   *,
   -abseil-*,
@@ -15,24 +15,66 @@ Checks: >
   -modernize-use-trailing-return-type,
   -modernize-use-nodiscard,
   -modernize-concat-nested-namespaces,
-  -cppcoreguidelines-avoid-magic-numbers,
-  -cppcoreguidelines-macro-usage,
-  -cppcoreguidelines-non-private-member-variables-in-classes,
-  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
-  -cppcoreguidelines-pro-bounds-constant-array-index,
-  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
-  -cppcoreguidelines-pro-type-const-cast,
-  -cppcoreguidelines-pro-type-cstyle-cast,
-  -cppcoreguidelines-pro-type-member-init,
-  -cppcoreguidelines-pro-type-reinterpret-cast,
-  -cppcoreguidelines-pro-type-union-access,
-  -cppcoreguidelines-pro-type-vararg,
-  -cppcoreguidelines-special-member-functions,
+  -cppcoreguidelines-*,
   -hicpp-*,
   -misc-*,
   -cert-*,
   -clang-analyzer-*,
-  -clang-diagnostic-*
+  -clang-diagnostic-*,
+  -bugprone-dangling-handle,
+  -bugprone-exception-escape,
+  -bugprone-fold-init-type,
+  -bugprone-forward-declaration-namespace,
+  -bugprone-forwarding-reference-overload,
+  -bugprone-inaccurate-erase,
+  -bugprone-lambda-function-name,
+  -bugprone-move-forwarding-reference,
+  -bugprone-parent-virtual-call,
+  -bugprone-sizeof-container,
+  -bugprone-string-constructor,
+  -bugprone-string-integer-assignment,
+  -bugprone-string-literal-with-embedded-nul,
+  -bugprone-undelegated-constructor,
+  -bugprone-unhandled-self-assignment,
+  -bugprone-unhandled-self-move,
+  -bugprone-unused-raii,
+  -bugprone-use-after-move,
+  -bugprone-virtual-near-miss,
+  -modernize-avoid-bind,
+  -modernize-avoid-c-arrays,
+  -modernize-concat-nested-namespaces,
+  -modernize-deprecated-headers,
+  -modernize-deprecated-ios-base-aliases,
+  -modernize-loop-convert,
+  -modernize-make-shared,
+  -modernize-make-unique,
+  -modernize-pass-by-value,
+  -modernize-raw-string-literal,
+  -modernize-redundant-void-arg,
+  -modernize-replace-auto-ptr,
+  -modernize-replace-disallow-copy-and-assign-macro,
+  -modernize-replace-random-shuffle,
+  -modernize-return-braced-init-list,
+  -modernize-shrink-to-fit,
+  -modernize-unary-static-assert,
+  -modernize-use-auto,
+  -modernize-use-bool-literals,
+  -modernize-use-default-member-init,
+  -modernize-use-emplace,
+  -modernize-use-equals-default,
+  -modernize-use-equals-delete,
+  -modernize-use-noexcept,
+  -modernize-use-nullptr,
+  -modernize-use-override,
+  -modernize-use-transparent-functors,
+  -modernize-use-uncaught-exceptions,
+  -performance-for-range-copy,
+  -performance-implicit-conversion-in-loop,
+  -performance-no-automatic-move,
+  -performance-noexcept-move-constructor,
+  -performance-trivially-destructible,
+  -performance-unnecessary-copy-initialization,
+  -performance-unnecessary-value-param
 
 # Don't treat warnings as errors (useful for gradual adoption)
 WarningsAsErrors: ''
@@ -40,24 +82,11 @@ WarningsAsErrors: ''
 # Check all headers
 HeaderFilterRegex: '.*'
 
-# Don't analyze temporary destructors (C++ specific)
-AnalyzeTemporaryDtors: false
-
 # Use file-based formatting
 FormatStyle: 'file'
 
 # Additional options for C development
 CheckOptions:
-  # Performance checks
-  - key: performance-for-range-copy
-    value: 'WarnOnAllAutoCopies'
-  - key: performance-implicit-conversion-in-loop
-    value: 'WarnOnImplicitConversion'
-  - key: performance-unnecessary-copy-initialization
-    value: 'WarnOnAllAutoCopies'
-  - key: performance-unnecessary-value-param
-    value: 'WarnOnAllAutoCopies'
-  
   # Readability checks
   - key: readability-function-cognitive-complexity
     value: '20'
@@ -65,10 +94,6 @@ CheckOptions:
     value: '50'
   - key: readability-identifier-length
     value: '3'
-  - key: readability-identifier-naming.ClassCase
-    value: 'CamelCase'
-  - key: readability-identifier-naming.EnumCase
-    value: 'CamelCase'
   - key: readability-identifier-naming.FunctionCase
     value: 'camelBack'
   - key: readability-identifier-naming.StructCase
@@ -81,31 +106,13 @@ CheckOptions:
     value: 'camelBack'
   - key: readability-identifier-naming.MemberCase
     value: 'camelBack'
-  - key: readability-identifier-naming.PrivateMemberSuffix
-    value: '_'
-  - key: readability-identifier-naming.ProtectedMemberSuffix
-    value: '_'
   
-  # Bugprone checks
+  # Bugprone checks (C-compatible only)
   - key: bugprone-branch-clone
-    value: 'true'
-  - key: bugprone-dangling-handle
-    value: 'true'
-  - key: bugprone-exception-escape
-    value: 'true'
-  - key: bugprone-fold-init-type
-    value: 'true'
-  - key: bugprone-forward-declaration-namespace
-    value: 'true'
-  - key: bugprone-forwarding-reference-overload
-    value: 'true'
-  - key: bugprone-inaccurate-erase
     value: 'true'
   - key: bugprone-incorrect-roundings
     value: 'true'
   - key: bugprone-infinite-loop
-    value: 'true'
-  - key: bugprone-lambda-function-name
     value: 'true'
   - key: bugprone-macro-parentheses
     value: 'true'
@@ -117,8 +124,6 @@ CheckOptions:
     value: 'true'
   - key: bugprone-misplaced-widening-cast
     value: 'true'
-  - key: bugprone-move-forwarding-reference
-    value: 'true'
   - key: bugprone-multiple-statement-macro
     value: 'true'
   - key: bugprone-narrowing-conversions
@@ -127,23 +132,13 @@ CheckOptions:
     value: 'true'
   - key: bugprone-not-null-terminated-result
     value: 'true'
-  - key: bugprone-parent-virtual-call
-    value: 'true'
   - key: bugprone-posix-return
     value: 'true'
   - key: bugprone-reserved-identifier
     value: 'true'
-  - key: bugprone-sizeof-container
-    value: 'true'
   - key: bugprone-sizeof-expression
     value: 'true'
   - key: bugprone-spurious-conditional-for-nullptr
-    value: 'true'
-  - key: bugprone-string-constructor
-    value: 'true'
-  - key: bugprone-string-integer-assignment
-    value: 'true'
-  - key: bugprone-string-literal-with-embedded-nul
     value: 'true'
   - key: bugprone-suspicious-enum-usage
     value: 'true'
@@ -165,98 +160,14 @@ CheckOptions:
     value: 'true'
   - key: bugprone-too-small-loop-variable
     value: 'true'
-  - key: bugprone-undelegated-constructor
-    value: 'true'
-  - key: bugprone-unhandled-self-assignment
-    value: 'true'
-  - key: bugprone-unhandled-self-move
-    value: 'true'
-  - key: bugprone-unused-raii
-    value: 'true'
   - key: bugprone-unused-return-value
     value: 'true'
-  - key: bugprone-use-after-move
-    value: 'true'
-  - key: bugprone-virtual-near-miss
-    value: 'true'
   
-  # Modernize checks
-  - key: modernize-avoid-bind
-    value: 'true'
-  - key: modernize-avoid-c-arrays
-    value: 'true'
-  - key: modernize-concat-nested-namespaces
-    value: 'true'
-  - key: modernize-deprecated-headers
-    value: 'true'
-  - key: modernize-deprecated-ios-base-aliases
-    value: 'true'
-  - key: modernize-loop-convert
-    value: 'true'
-  - key: modernize-make-shared
-    value: 'true'
-  - key: modernize-make-unique
-    value: 'true'
-  - key: modernize-pass-by-value
-    value: 'true'
-  - key: modernize-raw-string-literal
-    value: 'true'
-  - key: modernize-redundant-void-arg
-    value: 'true'
-  - key: modernize-replace-auto-ptr
-    value: 'true'
-  - key: modernize-replace-disallow-copy-and-assign-macro
-    value: 'true'
-  - key: modernize-replace-random-shuffle
-    value: 'true'
-  - key: modernize-return-braced-init-list
-    value: 'true'
-  - key: modernize-shrink-to-fit
-    value: 'true'
-  - key: modernize-unary-static-assert
-    value: 'true'
-  - key: modernize-use-auto
-    value: 'true'
-  - key: modernize-use-bool-literals
-    value: 'true'
-  - key: modernize-use-default-member-init
-    value: 'true'
-  - key: modernize-use-emplace
-    value: 'true'
-  - key: modernize-use-equals-default
-    value: 'true'
-  - key: modernize-use-equals-delete
-    value: 'true'
-  - key: modernize-use-noexcept
-    value: 'true'
-  - key: modernize-use-nullptr
-    value: 'true'
-  - key: modernize-use-override
-    value: 'true'
-  - key: modernize-use-transparent-functors
-    value: 'true'
-  - key: modernize-use-uncaught-exceptions
-    value: 'true'
-  
-  # Performance checks
-  - key: performance-for-range-copy
-    value: 'WarnOnAllAutoCopies'
-  - key: performance-implicit-conversion-in-loop
-    value: 'WarnOnImplicitConversion'
-  - key: performance-no-automatic-move
-    value: 'true'
+  # Performance checks (C-compatible only)
   - key: performance-no-int-to-ptr
-    value: 'true'
-  - key: performance-noexcept-move-constructor
-    value: 'true'
-  - key: performance-trivially-destructible
     value: 'true'
   - key: performance-type-promotion-in-math-fn
     value: 'true'
-  - key: performance-unnecessary-copy-initialization
-    value: 'WarnOnAllAutoCopies'
-  - key: performance-unnecessary-value-param
-    value: 'WarnOnAllAutoCopies'
   
   # Portability checks
   - key: portability-restrict

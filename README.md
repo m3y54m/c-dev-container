@@ -24,14 +24,21 @@ A minimal C project template with CMake build system and VSCode devcontainer.
 ├── .devcontainer/
 │   ├── devcontainer.json   # VSCode devcontainer configuration
 │   ├── Dockerfile          # Docker image definition
+│   ├── GIT_SETUP.md        # Git setup documentation
 │   └── setup-git.sh        # Git configuration setup script
 ├── src/
 │   └── main.c              # Main C source file
+├── build/                  # Build output directory
+│   └── debug/             # Debug build artifacts
+│       ├── bin/           # Debug executables
+│       └── ...            # CMake build files
 ├── .clang-format           # Code formatting configuration
 ├── .clang-tidy             # Static analysis configuration  
 ├── .clangd                 # Language server configuration
 ├── CMakeLists.txt          # CMake build configuration
 ├── CMakePresets.json       # CMake preset configurations
+├── GITHUB_ACTIONS_GUIDE.md # GitHub Actions CI documentation
+├── VALGRIND_GUIDE.md       # Valgrind memory debugging guide
 ├── .gitignore             # Git ignore rules
 └── README.md              # This file
 ```
@@ -186,6 +193,38 @@ valgrind --tool=cachegrind ./build/debug/bin/hello_world
 - **Uninitialized memory** access
 
 See `VALGRIND_GUIDE.md` for comprehensive usage instructions.
+
+## Documentation
+
+The project includes comprehensive documentation for various development workflows:
+
+### 📚 **Available Guides**
+
+#### **`GITHUB_ACTIONS_GUIDE.md`**
+- **CI/CD workflow** setup and configuration
+- **GitHub Actions** integration and automation
+- **Build pipeline** management and troubleshooting
+- **Artifact handling** and deployment strategies
+
+#### **`VALGRIND_GUIDE.md`**
+- **Memory debugging** with Valgrind Memcheck
+- **Performance profiling** with Cachegrind
+- **Memory leak detection** and analysis
+- **Advanced Valgrind** usage patterns and tips
+
+#### **`.devcontainer/GIT_SETUP.md`**
+- **Git configuration** setup in dev containers
+- **SSH key management** and commit signing
+- **Troubleshooting** common Git issues
+- **Security best practices** for development
+
+### 📖 **Quick Reference**
+
+| Guide | Purpose | When to Use |
+|-------|---------|-------------|
+| `GITHUB_ACTIONS_GUIDE.md` | CI/CD workflows | Setting up automated builds and testing |
+| `VALGRIND_GUIDE.md` | Memory debugging | Finding memory leaks and performance issues |
+| `GIT_SETUP.md` | Git configuration | Troubleshooting Git setup in containers |
 
 ## Static Analysis with clang-tidy
 
